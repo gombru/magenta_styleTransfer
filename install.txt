@@ -1,0 +1,47 @@
+# Repo URL: https://github.com/tensorflow/magenta/tree/master/magenta/models/image_stylization
+# Only works with CUDA 9. Followed intallation instructions on https://gist.github.com/zhanwenchen/e520767a409325d9961072f666815bb8
+# But had to use CudNN 7.4.2
+
+# Install latest tensorflow (or one working with installed CUDA and CUdNN)
+sudo pip install --upgrade tensorflow
+
+# Requirements installations (other missing / will need to --upgrade many by pip)
+sudo apt-get install build-essential libasound2-dev libjack-dev
+sudo pip install --upgrade tensorflow-probability-gpu
+sudo pip install intervaltree==2.1.0
+
+# Magenta installation
+git clone https://github.com/tensorflow/magenta.git
+cd magenta
+python setup.py --gpu develop
+
+cd magenta/models/image_stylization
+
+# Test pretrained models
+sudo image_stylization_transform \
+      --num_styles=32 \
+      --checkpoint=/home/Imatge/hd/datasets/styleTransferMiro/models/multistyle-pastiche-generator-varied.ckpt \
+      --input_image=/home/Imatge/hd/datasets/styleTransferMiro/test_images/me.jpg \
+      --which_styles="[0,1,2,5]" \
+      --output_dir=/home/Imatge/hd/datasets/styleTransferMiro/results/ \
+      --output_basename="varied"
+
+# Might need to follow bug fix in https://github.com/tensorflow/magenta/issues/1350 for file
+# /usr/local/lib/python2.7/dist-packages/tensorflow_probability/python/distributions/vector_diffeomixture.py
+
+# Output images cannot be read by filesystem, but opening them with PIL and saving them back solves the problem
+
+# Train my own model
+# 1st: Prepare style images
+sudo image_stylization_create_dataset \
+      --vgg_checkpoint=/home/Imatge/hd/datasets/styleTransferMiro/models/vgg_16.ckpt \
+      --style_files=/home/Imatge/hd/datasets/styleTransferMiro/miro_src_styles/*.jpg \
+      --output_file=/home/Imatge/hd/datasets/styleTransferMiro/miro_src_styles/style_images.tfrecord
+# 2nd: Train model
+sudo image_stylization_train \
+      --train_dir=/home/Imatge/hd/datasets/styleTransferMiro/train/train
+      --style_dataset_file=/home/Imatge/hd/datasets/styleTransferMiro/miro_src_styles/style_images.tfrecord \
+      --num_styles=10 \
+      --vgg_checkpoint=/home/Imatge/hd/datasets/styleTransferMiro/models/vgg_16.ckpt \
+      --imagenet_data_dir=/home/Imatge/hd/datasets/ImageNet_TensorFlow/imagenet-2012-tfrecord
+
