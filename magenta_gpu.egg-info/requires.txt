@@ -1,0 +1,27 @@
+IPython
+absl-py
+Pillow>=3.4.2
+backports.tempfile
+bokeh>=0.12.0
+intervaltree>=2.1.0
+joblib>=0.12
+librosa>=0.6.2
+matplotlib>=1.5.3
+mido==1.2.6
+mir_eval>=0.4
+numpy>=1.11.0
+pandas>=0.18.1
+pretty_midi>=0.2.6
+protobuf
+python-rtmidi
+scipy>=0.18.1
+sk-video
+sonnet
+tensorflow-probability>=0.5.0
+tensor2tensor>=1.10.0
+wheel
+tensorflow-gpu>=1.12.0
+
+[:python_version == "2.7"]
+futures
+apache-beam>=2.8.0

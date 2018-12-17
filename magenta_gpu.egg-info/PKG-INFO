@@ -1,0 +1,22 @@
+Metadata-Version: 1.1
+Name: magenta-gpu
+Version: 0.4.0
+Summary: Use machine learning to create art and music
+Home-page: https://magenta.tensorflow.org/
+Author: Google Inc.
+Author-email: opensource@google.com
+License: Apache 2
+Description-Content-Type: UNKNOWN
+Description: UNKNOWN
+Keywords: tensorflow machine learning magenta music art
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Education
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Topic :: Scientific/Engineering :: Mathematics
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Software Development :: Libraries
