@@ -11,7 +11,7 @@ sudo pip install --upgrade tensorflow
 sudo apt-get install build-essential libasound2-dev libjack-dev
 sudo pip install --upgrade tensorflow-probability-gpu
 sudo pip install intervaltree==2.1.0
-sudo pip install joblib --upgrade # This requires joblib >12, but this version is not working with my code
+sudo pip install joblib --upgrade # This requires joblib >0.12, but this version is not working with other code
 
 
 # Magenta installation
@@ -78,7 +78,8 @@ sudo image_stylization_transform \
 
 
 # Implementation details
-To be able to use the model with different inputs I have set reuse=tf.AUTO_REUSE
-I have create two new functions in /magenta/models/image_stylization_transform.py:
-multiple_input_images, which computes stylization for several images, and video_stylization, which computes stylization directly in a video from a camera.
-Call to those functions are available in gombru/
+To be able to use a loaded model with different inputs the way the load the model we have to set reuse=tf.AUTO_REUSE
+I have created functions in gombru/ to:
+-Stylize a set of images: style_images.py
+-Stylize a video from camera: style_cam.py
+Both use calls to the magenta API in styleTransfer_calls.py
