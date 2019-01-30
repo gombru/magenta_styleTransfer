@@ -11,13 +11,13 @@ sudo pip install --upgrade tensorflow
 sudo apt-get install build-essential libasound2-dev libjack-dev
 sudo pip install --upgrade tensorflow-probability-gpu
 sudo pip install intervaltree==2.1.0
-sudo pip install joblib --upgrade # This requires joblib >0.12, but this version is not working with other code
+sudo pip install joblib --upgrade # This requires joblib >0.12, but this version is not working with other code I had
 
 
 # Magenta installation
 git clone https://github.com/tensorflow/magenta.git
 cd magenta
-python setup.py --gpu develop
+sudo python setup.py --gpu develop
 
 cd magenta/models/image_stylization
 
@@ -46,15 +46,15 @@ sudo image_stylization_transform \
 # 1st: Prepare style images
 sudo image_stylization_create_dataset \
       --vgg_checkpoint=/home/Imatge/hd/datasets/styleTransferMiro/models/vgg_16.ckpt \
-      --style_files=/home/Imatge/hd/datasets/styleTransferMiro/miro_src_styles/*.jpg \
-      --output_file=/home/Imatge/hd/datasets/styleTransferMiro/miro_src_styles/style_images.tfrecord
+      --style_files=/home/Imatge/hd/datasets/styleTransferMiro/text_src_styles/*.jpg \
+      --output_file=/home/Imatge/hd/datasets/styleTransferMiro/text_src_styles/style_images.tfrecord
 # 2nd: Train model
 sudo image_stylization_train \
-      --train_dir=/home/Imatge/hd/datasets/styleTransferMiro/train/train
-      --style_dataset_file=/home/Imatge/hd/datasets/styleTransferMiro/miro_src_styles/style_images.tfrecord \
-      --num_styles=9 \
+      --train_dir=/home/Imatge/hd/datasets/styleTransferMiro/train/text \
+      --style_dataset_file=/home/Imatge/hd/datasets/styleTransferMiro/text_src_styles/style_images.tfrecord \
+      --num_styles=8 \
       --vgg_checkpoint=/home/Imatge/hd/datasets/styleTransferMiro/models/vgg_16.ckpt \
-      --imagenet_data_dir=/home/Imatge/hd/datasets/ImageNet_TensorFlow/imagenet-2012-tfrecord
+      --imagenet_data_dir=/home/Imatge/hd/datasets/ImageNet_TensorFlow/data
 
 
 # Evaluate the trained model
@@ -64,13 +64,13 @@ sudo image_stylization_evaluate \
       --eval_dir=/home/Imatge/hd/datasets/styleTransferMiro/eval/eval \
       --num_styles=9 \
       --vgg_checkpoint=/home/Imatge/hd/datasets/styleTransferMiro/models/vgg_16.ckpt \
-      --imagenet_data_dir=/home/Imatge/hd/datasets/ImageNet_TensorFlow/imagenet-2012-tfrecord \
+      --imagenet_data_dir=/home/Imatge/hd/datasets/ImageNet_TensorFlow/data \
       --style_grid
 
 # --> INFER WITH MY OWN MODEL
 sudo image_stylization_transform \
       --num_styles=9 \
-      --checkpoint=/home/Imatge/hd/datasets/styleTransferMiro/train/train/MYOWNMODEL.ckpt \
+      --checkpoint=/home/Imatge/hd/datasets/styleTransferMiro/train/train \
       --input_image=/home/Imatge/hd/datasets/styleTransferMiro/test_images/me.jpg \
       --which_styles="[0,1,2,3,4,5,6,7,8]" \
       --output_dir=/home/Imatge/hd/datasets/styleTransferMiro/results/ \
