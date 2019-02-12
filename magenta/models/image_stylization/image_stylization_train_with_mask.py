@@ -70,7 +70,7 @@ def main(unused_argv=None):
     device = '/cpu:0' if not FLAGS.ps_tasks else '/job:worker/cpu:0'
     with tf.device(tf.train.replica_device_setter(FLAGS.ps_tasks,
                                                   worker_device=device)):
-      print("Using COCO-Text dataset")
+      print("Using COCOText dataset")
       inputs, masks = image_utils.COCOText_inputs(FLAGS.batch_size,
                                               FLAGS.image_size)
       # Load style images and select one at random (for each graph execution, a
