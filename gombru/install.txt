@@ -46,15 +46,15 @@ sudo image_stylization_transform \
 # 1st: Prepare style images
 sudo image_stylization_create_dataset \
       --vgg_checkpoint=/home/Imatge/hd/datasets/styleTransferMiro/models/vgg_16.ckpt \
-      --style_files=/home/Imatge/hd/datasets/styleTransferMiro/text_src_styles/*.jpg \
-      --output_file=/home/Imatge/hd/datasets/styleTransferMiro/text_src_styles/style_images.tfrecord
+      --style_files=/home/Imatge/hd/datasets/styleTransferMiro/icdar_src_styles_resized/*.jpg \
+      --output_file=/home/Imatge/hd/datasets/styleTransferMiro/icdar_src_styles_resized/style_images.tfrecord
 # 2nd: Train model
 sudo image_stylization_train \
-      --train_dir=/home/Imatge/hd/datasets/styleTransferMiro/train/text \
-      --style_dataset_file=/home/Imatge/hd/datasets/styleTransferMiro/text_src_styles/style_images.tfrecord \
-      --num_styles=8 \
+      --train_dir=/home/Imatge/hd/datasets/styleTransferMiro/train/icdar \
+      --style_dataset_file=/home/Imatge/hd/datasets/styleTransferMiro/icdar_src_styles_resized/style_images.tfrecord \
+      --num_styles=96 \
       --vgg_checkpoint=/home/Imatge/hd/datasets/styleTransferMiro/models/vgg_16.ckpt \
-      --imagenet_data_dir=/home/Imatge/hd/datasets/ImageNet_TensorFlow/data
+      --imagenet_data_dir=/hssome/Imatge/hd/datasets/ImageNet_TensorFlow/data
 
 
 # Evaluate the trained model
@@ -76,6 +76,23 @@ sudo image_stylization_transform \
       --output_dir=/home/Imatge/hd/datasets/styleTransferMiro/results/ \
       --output_basename="miro"
 
+# --> Average styles
+sudo image_stylization_transform \
+      --num_styles=34 \
+      --checkpoint=/home/raulgomez/other_datasets/styleTransferMiro/models/words/ \
+      --input_image=/home/raulgomez/datasets/StyleTransfer/results/averaged_styles_processed/COCO_train2014_000000002575.jpg \
+      --which_styles="[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33]" \
+      --output_dir=/home/raulgomez/datasets/StyleTransfer/results/averaged_styles \
+      --output_basename="averaged"
+sudo image_stylization_transform \
+      --num_styles=34 \
+      --checkpoint=/home/raulgomez/other_datasets/styleTransferMiro/models/words/ \
+      --input_image=/home/raulgomez/datasets/StyleTransfer/results/averaged_styles_processed/7/original/averaged.jpg \
+      --which_styles="{21:0.1,27:0.9}" \
+      --output_dir=/home/raulgomez/datasets/StyleTransfer/results/averaged_styles \
+      --output_basename="01_09"
+
+
 
 # Implementation details
 To be able to use a loaded model with different inputs the way the load the model we have to set reuse=tf.AUTO_REUSE
@@ -83,3 +100,13 @@ I have created functions in gombru/ to:
 -Stylize a set of images: style_images.py
 -Stylize a video from camera: style_cam.py
 Both use calls to the magenta API in styleTransfer_calls.py
+
+
+# --> Train model masked
+sudo image_stylization_train_with_mask \
+      --train_dir=/home/Imatge/hd/datasets/styleTransferMiro/train/words_COCOText \
+      --style_dataset_file=/home/Imatge/hd/datasets/styleTransferMiro/words_src_styles/style_images.tfrecord \
+      --num_styles=34 \
+      --vgg_checkpoint=/home/Imatge/hd/datasets/styleTransferMiro/models/vgg_16.ckpt \
+      --imagenet_data_dir=/hssome/Imatge/hd/datasets/ImageNet_TensorFlow/data
+

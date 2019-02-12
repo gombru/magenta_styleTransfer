@@ -31,12 +31,72 @@ from magenta.models.image_stylization import imagenet_data
 from tensorflow.python.framework import dtypes
 from tensorflow.python.ops import random_ops
 
+import custom_dataset
 
 slim = tf.contrib.slim
 
 
 _EVALUATION_IMAGES_GLOB = 'evaluation_images/*.jpg'
 
+
+def COCOText_inputs(batch_size, image_size):
+
+  """Loads a batch of COCO-Text inputs. (gombru)
+
+  It loads images and GT masks from raw jpg and png.
+  Very simple single thread loader that returns the image and the mask.
+
+  Returns:
+
+    Image:
+    4-D tensor of images of shape [batch_size, image_size, image_size, 3], with
+    values in [0, 1].
+
+    Mask:
+    4-D tensor of images of shape [batch_size, image_size, image_size, 3], with
+    binary values [0, 1].
+
+  """
+  dataset = custom_dataset.CustomDataset('/home/Imatge/ssd2/COCO-Text/')
+
+  with tf.name_scope('batch_processing'):
+
+    images = tf.zeros([batch_size, image_size, image_size, 3], tf.int32)
+    masks = tf.zeros([batch_size, image_size, image_size, 3], tf.int32)
+
+    img_filenames = []
+    mask_filenames = []
+
+    for i in range(batch_size):
+      img_filename, mask_filename = dataset.get_item()
+      img_filenames.append(img_filename)
+      mask_filenames.mask_filename(img_filename)
+
+      img_filename_queue = tf.train.string_input_producer(tf.convert_to_tensor(img_filenames), shuffle=False)
+      mask_filename_queue = tf.train.string_input_producer(tf.convert_to_tensor(img_filenames), shuffle=False)
+
+      img_reader = tf.WholeFileReader()
+      image_key, image_raw = img_reader.read(img_filename_queue)
+      image = tf.image.decode_jpg(image_raw)
+      mask_reader =tf.WholeFileReader()
+      mask_key, mask_raw = mask_reader.read(mask_filename_queue)
+      mask = tf.image.decode_png(mask_raw)
+
+      image = _aspect_preserving_resize(image, image_size + 2)
+      image = _central_crop([image], image_size, image_size)[0]
+      image.set_shape([image_size, image_size, 3])
+      image = tf.to_float(image) / 255.0
+
+      mask = _aspect_preserving_resize(mask, image_size + 2)
+      mask = _central_crop([mask], image_size, image_size)[0]
+      mask.set_shape([image_size, image_size, 3])
+      mask = tf.to_float(mask) / 255.0
+      print("Max and min of mask: " + str(max(mask)) + str(min(mask)))
+
+      images[i,:,:,:] = image
+      masks[i,:,:,:] = mask
+
+    return images, masks
 
 def imagenet_inputs(batch_size, image_size, num_readers=1,
                     num_preprocess_threads=4):
